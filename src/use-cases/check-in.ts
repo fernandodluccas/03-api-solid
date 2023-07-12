@@ -17,6 +17,15 @@ export class CheckinUseCase {
   constructor(private readonly checkinsRepository: CheckinsRepository) {}
 
   async execute({ userId, gymId }: CheckinUseCaseRequest) {
+    const checkInExists = await this.checkinsRepository.findByUserIdOnDate(
+      userId,
+      new Date()
+    );
+
+    if (checkInExists) {
+      throw new Error('Check-in already exists');
+    }
+
     const checkIn = await this.checkinsRepository.create({
       gym_id: gymId,
       user_id: userId,
