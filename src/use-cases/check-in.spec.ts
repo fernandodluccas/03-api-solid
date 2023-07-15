@@ -1,17 +1,17 @@
 import { expect, describe, it, beforeEach, vi, afterEach } from 'vitest';
 import { CheckinUseCase } from './check-in';
 import { InMemoryCheckinsRepository } from '@/repositories/in-memory/in-memory-check-ins-repository';
-import { InMemeoryGymsRepository } from '@/repositories/in-memory/in-memoty-gums.repository';
 import { Decimal } from '@prisma/client/runtime/library';
+import { InMemoryGymsRepository } from '@/repositories/in-memory/in-memory-gyms.repository';
 
 let checkinRepository: InMemoryCheckinsRepository;
-let gymsRepository: InMemeoryGymsRepository;
+let gymsRepository: InMemoryGymsRepository;
 let sut: CheckinUseCase;
 
 describe('Check-in use case', () => {
   beforeEach(() => {
     checkinRepository = new InMemoryCheckinsRepository();
-    gymsRepository = new InMemeoryGymsRepository();
+    gymsRepository = new InMemoryGymsRepository();
     sut = new CheckinUseCase(checkinRepository, gymsRepository);
 
     gymsRepository.items.push({

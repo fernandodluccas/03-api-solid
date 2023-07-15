@@ -3,6 +3,8 @@ import { CheckinsRepository } from '@/repositories/check-ins-repository';
 import { GymsRepository } from '@/repositories/gyms-repository';
 import { ResourceNotFoundError } from './errors/resource-not-found';
 import { getDistanceBetweenCoordinates } from '@/utils/get-distance-between-two-coordinates';
+import { MaxDsitanceError } from './errors/max-distance-error';
+import { MaxNumberOfCheckInsError } from './errors/max-number-of-check-ins-error';
 
 interface CheckinUseCaseRequest {
   userId: string;
@@ -12,7 +14,7 @@ interface CheckinUseCaseRequest {
 }
 
 interface CheckinUseCaseResponse {
-  checkin: Checkin;
+  checkIn: Checkin;
 }
 
 export class CheckinUseCase {
@@ -26,7 +28,7 @@ export class CheckinUseCase {
     gymId,
     userLatitude,
     userLongitude,
-  }: CheckinUseCaseRequest) {
+  }: CheckinUseCaseRequest): Promise<CheckinUseCaseResponse> {
     const gym = await this.gymsRepository.findById(gymId);
 
     if (!gym) {
@@ -41,7 +43,7 @@ export class CheckinUseCase {
     const MAX_DISTANCE_IN_KM = 1;
 
     if (distance > MAX_DISTANCE_IN_KM) {
-      throw new Error('You are too far from the gym');
+      throw new MaxDsitanceError();
     }
 
     const checkInExists = await this.checkinsRepository.findByUserIdOnDate(
@@ -50,7 +52,7 @@ export class CheckinUseCase {
     );
 
     if (checkInExists) {
-      throw new Error('Check-in already exists');
+      throw new MaxNumberOfCheckInsError();
     }
 
     const checkIn = await this.checkinsRepository.create({
@@ -58,6 +60,8 @@ export class CheckinUseCase {
       user_id: userId,
     });
 
-    return { checkIn };
+    return {
+      checkIn,
+    };
   }
 }
