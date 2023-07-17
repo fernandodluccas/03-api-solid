@@ -10,6 +10,7 @@ describe('Get user metrics', async () => {
     checkInRepository = new InMemoryCheckinsRepository();
     sut = new GetUserMetricsUseCase(checkInRepository);
   });
+
   it('should be able to get check-ins count', async () => {
     await checkInRepository.create({
       gym_id: 'gym-01',
